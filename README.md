@@ -1,9 +1,8 @@
 # Todo-list
 Atividade de aplicação móvel
 
-Parte do Back-end
-    dotnet new webapi -o Back-End
-    cd Back-End
+## Parte do Back-end
+    py -m pip install flask flask-cors PyJWT pymysql
 
-    dotnet add package Pomelo.EntityFrameworkCore.MySql
-    dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+## Parte do Front-End
+    winget install OpenJS.NodeJS
