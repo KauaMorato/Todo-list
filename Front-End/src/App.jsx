@@ -4,11 +4,9 @@ import Cadastro from './screens/Cadastro';
 import Dashboard from './screens/Dashboard';
 
 function App() {
-  // Estados possíveis: 'login', 'cadastro', 'dashboard'
   const [telaAtual, setTelaAtual] = useState('login');
 
   useEffect(() => {
-    // Se o usuário já tiver um token salvo, vai direto para o Dashboard
     const token = localStorage.getItem('token');
     if (token) {
       setTelaAtual('dashboard');
