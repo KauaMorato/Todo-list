@@ -1,79 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 
-export default function Dashboard() {
+function Dashboard({ deslogar }) {
   const [tarefas, setTarefas] = useState([]);
   const [novaTarefa, setNovaTarefa] = useState('');
 
-  // 1. LISTAR (Read) - Roda assim que a tela abre
+  // Carrega as tarefas exclusivas do usuário logado ao abrir a tela
   useEffect(() => {
     carregarTarefas();
   }, []);
 
   const carregarTarefas = async () => {
     try {
-      const response = await api.get('/tarefas'); // O Back já filtra pelo usuário do token
-      setTarefas(response.data);
-    } catch (error) {
-      console.error("Erro ao carregar tarefas", error);
+      const resposta = await api.get('/tarefas');
+      setTarefas(resposta.data);
+    } catch (err) {
+      if (err.response?.status === 401) handleSair();
     }
   };
 
-  // 2. CRIAR (Create)
-  const handleCriar = async (e) => {
+  const adicionarTarefa = async (e) => {
     e.preventDefault();
-    if (!novaTarefa) return;
-
+    if (!novaTarefa.trim()) return;
     try {
       await api.post('/tarefas', { titulo: novaTarefa });
       setNovaTarefa('');
-      carregarTarefas(); // Atualiza a lista
-    } catch (error) {
-      console.error("Erro ao criar tarefa", error);
+      carregarTarefas();
+    } catch (err) {
+      alert('Erro ao adicionar tarefa');
     }
   };
 
-  // 3. ATUALIZAR (Update - Ex: Marcar como concluída)
-  const handleAlternarConcluida = async (id, statusAtual) => {
+  const alternarConclusao = async (id, concluidaAtual) => {
     try {
-      await api.put(`/tarefas/${id}`, { concluida: !statusAtual });
-      carregarTarefas(); // Atualiza a lista
-    } catch (error) {
-      console.error("Erro ao atualizar tarefa", error);
+      await api.put(`/tarefas/${id}`, { concluida: !concluidatual });
+      carregarTarefas();
+    } catch (err) {
+      alert('Erro ao atualizar tarefa');
     }
   };
 
-  // 4. EXCLUIR (Delete)
-  const handleDeletar = async (id) => {
+  const deletarTarefa = async (id) => {
     try {
       await api.delete(`/tarefas/${id}`);
-      carregarTarefas(); // Atualiza a lista
-    } catch (error) {
-      console.error("Erro ao deletar tarefa", error);
+      carregarTarefas();
+    } catch (err) {
+      alert('Erro ao deletar tarefa');
     }
+  };
+
+  const handleSair = () => {
+    localStorage.removeItem('token');
+    deslogar();
   };
 
   return (
-    <div>
-      <h2>Minhas Tarefas</h2>
-      
-      {/* Formulário para Criar */}
-      <form onSubmit={handleCriar}>
-        <input value={novaTarefa} onChange={e => setNovaTarefa(e.target.value)} placeholder="Nova tarefa..." />
-        <button type="submit">Adicionar</button>
+    <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2>Minhas Tarefas</h2>
+        <button onClick={handleSair} style={{ padding: '5px 10px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Sair</button>
+      </div>
+
+      <form onSubmit={adicionarTarefa} style={{ display: 'flex', marginBottom: '20px' }}>
+        <input type="text" value={novaTarefa} onChange={e => setNovaTarefa(e.target.value)} placeholder="Nova tarefa..." style={{ flex: 1, padding: '8px', borderRadius: '4px 0 0 4px', border: '1px solid #ccc' }} />
+        <button type="submit" style={{ padding: '8px 15px', background: '#007bff', color: 'white', border: 'none', borderRadius: '0 4px 4px 0', cursor: 'pointer' }}>+</button>
       </form>
 
-      {/* Listagem com os botões de Editar e Deletar */}
-      <ul>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
         {tarefas.map(tarefa => (
-          <li key={tarefa.id} style={{ textDecoration: tarefa.concluida ? 'line-through' : 'none' }}>
-            <span onClick={() => handleAlternarConcluida(tarefa.id, tarefa.concluida)}>
-              {tarefa.titulo}
-            </span>
-            <button onClick={() => handleDeletar(tarefa.id)}>❌ Deletar</button>
+          <li key={tarefa.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', background: 'white', marginBottom: '8px', borderRadius: '4px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <input type="checkbox" checked={!!tarefa.concluida} onChange={() => alternarConclusao(tarefa.id, tarefa.concluida)} />
+              <span style={{ textDecoration: tarefa.concluida ? 'line-through' : 'none', color: tarefa.concluida ? '#888' : '#000' }}>{tarefa.titulo}</span>
+            </div>
+            <button onClick={() => deletarTarefa(tarefa.id)} style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontWeight: 'bold' }}>X</button>
           </li>
         ))}
       </ul>
     </div>
   );
 }
+
+export default Dashboard;

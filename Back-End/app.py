@@ -17,7 +17,7 @@ def get_db_connection():
         host="localhost",
         user="root",          # Seu usuário do MySQL
         password="@Mello2026",  # Sua senha do MySQL
-        database="todo_list_db",
+        database="prova_todolist",
         cursorclass=pymysql.cursors.DictCursor
     )
 

@@ -1,49 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import Login from './screens/Login';
+import Cadastro from './screens/Cadastro';
 import Dashboard from './screens/Dashboard';
-import { setAuthToken } from './services/api';
 
-export default function App() {
-  // Estado para controlar se o usuário está logado ou não
-  const [estaLogado, setEstaLogado] = useState(false);
+function App() {
+  // Estados possíveis: 'login', 'cadastro', 'dashboard'
+  const [telaAtual, setTelaAtual] = useState('login');
 
-  // Assim que o app abre, verifica se já existe um token salvo
   useEffect(() => {
+    // Se o usuário já tiver um token salvo, vai direto para o Dashboard
     const token = localStorage.getItem('token');
     if (token) {
-      setAuthToken(token); // Ativa o token no Axios
-      setEstaLogado(true);  // Manda direto para o Dashboard
+      setTelaAtual('dashboard');
     }
   }, []);
 
-  // Função chamada após o login com sucesso
-  const logar = () => {
-    setEstaLogado(true);
-  };
-
-  // Função para fazer Logoff (Sair)
-  const deslogar = () => {
-    localStorage.removeItem('token');
-    setAuthToken(null);
-    setEstaLogado(false);
-  };
-
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>📌 To-Do List do Projeto</h1>
-      <hr />
-
-      {/* Roteamento simples: se logado mostra Dashboard, senão mostra Login */}
-      {estaLogado ? (
-        <div>
-          <button onClick={deslogar} style={{ float: 'right', background: 'red', color: 'white' }}>
-            Sair da Conta
-          </button>
-          <Dashboard />
-        </div>
-      ) : (
-        <Login onLoginSuccess={logar} />
+    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
+      {telaAtual === 'login' && (
+        <Login navegarParaCadastro={() => setTelaAtual('cadastro')} logarSucesso={() => setTelaAtual('dashboard')} />
+      )}
+      {telaAtual === 'cadastro' && (
+        <Cadastro navegarParaLogin={() => setTelaAtual('login')} />
+      )}
+      {telaAtual === 'dashboard' && (
+        <Dashboard deslogar={() => setTelaAtual('login')} />
       )}
     </div>
   );
 }
+
+export default App;

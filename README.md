@@ -6,3 +6,7 @@ Atividade de aplicação móvel
 
 ## Parte do Front-End
     winget install OpenJS.NodeJS
+
+## Execução do Projeto
+    cd Front-End
+    npm run dev

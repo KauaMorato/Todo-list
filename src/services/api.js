@@ -1,16 +1,16 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:5000' // URL do seu backend Python ou C#
+  baseURL: 'http://127.0.0.1:5000'
 });
 
-// Essa função anexa o Token automaticamente em todas as requisições futuras
-export const setAuthToken = (token) => {
+// Interceptor para colocar o Token JWT automaticamente em todas as requisições
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
   if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } else {
-    delete api.defaults.headers.common['Authorization'];
+    config.headers.Authorization = `Bearer ${token}`;
   }
-};
+  return config;
+});
 
 export default api;
