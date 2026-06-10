@@ -10,11 +10,16 @@ Atividade de aplicação móvel, usando auxilio de uma IA para ajudar a proporci
 ## Parte do Front-End
     winget install OpenJS.NodeJS
         Comando usado para baixar o Node.js
-        npm install @react-native-async-storage/async-storage axios
+    npm install @react-native-async-storage/async-storage axios
+    npm install expo
 
 ## Execução do Projeto
+    cd Back-End
+    python app.py
+
     cd Front-End
     npx expo start
-        Comando usado para acessar a pasta do front-end, em seguida tem que usar o npx expo start para rodar o código, adiante basta só apertar o CTRL + Click Esquerdo do Mouse no link da porta
 
-        Se tudo ocorrer certo ele vai emitir uma mensagem de alerta dizendo que funcionou, caso ele de como errado, vai emitir outra mensagem em vermelho dizendo qual é o erro e o problema a ser arrumado
+        Primeiro se deve abrir a pasta do Back-End, em seguida ligar o servidor que inclui o mysql nele
+
+        Em seguida acessar a pasta do Front-End e ligar o servidor, depois é só rodar o código no Android Studio ou acessar o QR Code que aparece no terminal
