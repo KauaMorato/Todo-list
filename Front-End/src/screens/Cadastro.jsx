@@ -1,55 +1,48 @@
 import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import api from '../services/api';
 
-function Cadastro({ navegarParaLogin }) {
+export default function Cadastro({ navegarParaLogin }) {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [sucesso, setSucesso] = useState('');
-  const [erro, setErro] = useState('');
 
-  const handleCadastro = async (e) => {
-    e.preventDefault();
+  const handleCadastro = async () => {
+    if (!nome || !email || !senha) {
+      Alert.alert('Erro', 'Preencha todos os campos');
+      return;
+    }
     try {
-      setErro('');
-      setSucesso('');
       await api.post('/cadastro', { nome, email, senha });
-      setSucesso('Usuário cadastrado! Redirecionando...');
-      setTimeout(() => navegarParaLogin(), 2000);
-    } catch (err) {
-      setErro(err.response?.data?.error || 'Erro ao realizar cadastro.');
+      Alert.alert('Sucesso', 'Conta criada com sucesso!', [{ text: 'OK', onPress: navegarParaLogin }]);
+    } catch (error) {
+      Alert.alert('Erro', 'Erro ao cadastrar usuário.');
     }
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <form onSubmit={handleCadastro} style={{ background: 'white', padding: '30px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: '300px' }}>
-        <h2>Criar Conta</h2>
-        {erro && <p style={{ color: 'red', fontSize: '14px' }}>{erro}</p>}
-        {sucesso && <p style={{ color: 'green', fontSize: '14px' }}>{sucesso}</p>}
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Criar Conta ✨</Text>
+      <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
+      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+      <TextInput style={styles.input} placeholder="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
+      
+      <TouchableOpacity style={styles.botao} onPress={handleCadastro}>
+        <Text style={styles.textoBotao}>Cadastrar</Text>
+      </TouchableOpacity>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label>Nome:</label>
-          <input type="text" value={nome} onChange={e => setNome(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px', boxSizing: 'border-box' }} />
-        </div>
-        
-        <div style={{ marginBottom: '15px' }}>
-          <label>E-mail:</label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px', boxSizing: 'border-box' }} />
-        </div>
-
-        <div style={{ marginBottom: '15px' }}>
-          <label>Senha:</label>
-          <input type="password" value={senha} onChange={e => setSenha(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px', boxSizing: 'border-box' }} />
-        </div>
-
-        <button type="submit" style={{ width: '100%', padding: '10px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Registrar</button>
-        <p style={{ marginTop: '15px', textAlign: 'center', fontSize: '14px' }}>
-          Já tem conta? <span onClick={navegarParaLogin} style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}>Faça Login</span>
-        </p>
-      </form>
-    </div>
+      <TouchableOpacity onPress={navegarParaLogin}>
+        <Text style={styles.link}>Já tem uma conta? Faça Login</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
-export default Cadastro;
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  titulo: { fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'center', color: '#333' },
+  input: { borderWidth: 1, borderColor: '#ccc', padding: 15, borderRadius: 8, marginBottom: 15, backgroundColor: '#fff' },
+  botao: { backgroundColor: '#28a745', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  textoBotao: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  link: { color: '#007bff', textAlign: 'center', marginTop: 20, fontWeight: '600' }
+});

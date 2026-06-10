@@ -1,46 +1,48 @@
 import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
 
-function Login({ navegarParaCadastro, logarSucesso }) {
+export default function Login({ navegarParaCadastro, logarSucesso }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
+    if (!email || !senha) {
+      Alert.alert('Erro', 'Preencha todos os campos');
+      return;
+    }
     try {
-      setErro('');
-      const resposta = await api.post('/login', { email, senha });
-      localStorage.setItem('token', resposta.data.token);
+      const response = await api.post('/login', { email, senha });
+      await AsyncStorage.setItem('token', response.data.token);
       logarSucesso();
-    } catch (err) {
-      setErro(err.response?.data?.error || 'Erro ao conectar com o servidor.');
+    } catch (error) {
+      Alert.alert('Erro', 'Email ou senha incorretos');
     }
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <form onSubmit={handleLogin} style={{ background: 'white', padding: '30px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: '300px' }}>
-        <h2>Entrar no To-Do List</h2>
-        {erro && <p style={{ color: 'red', fontSize: '14px' }}>{erro}</p>}
-        
-        <div style={{ marginBottom: '15px' }}>
-          <label>E-mail:</label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px', boxSizing: 'border-box' }} />
-        </div>
+    <View style={styles.container}>
+      <Text style={styles.titulo}>To-Do List 📝</Text>
+      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+      <TextInput style={styles.input} placeholder="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
+      
+      <TouchableOpacity style={styles.botao} onPress={handleLogin}>
+        <Text style={styles.textoBotao}>Entrar</Text>
+      </TouchableOpacity>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label>Senha:</label>
-          <input type="password" value={senha} onChange={e => setSenha(e.target.value)} required style={{ width: '100%', padding: '8px', marginTop: '5px', boxSizing: 'border-box' }} />
-        </div>
-
-        <button type="submit" style={{ width: '100%', padding: '10px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Entrar</button>
-        <p style={{ marginTop: '15px', textAlign: 'center', fontSize: '14px' }}>
-          Não tem conta? <span onClick={navegarParaCadastro} style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}>Cadastre-se</span>
-        </p>
-      </form>
-    </div>
+      <TouchableOpacity onPress={navegarParaCadastro}>
+        <Text style={styles.link}>Não tem uma conta? Cadastre-se</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
-export default Login;
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  titulo: { fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'center', color: '#333' },
+  input: { borderWidth: 1, borderColor: '#ccc', padding: 15, borderRadius: 8, marginBottom: 15, backgroundColor: '#fff' },
+  botao: { backgroundColor: '#007bff', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  textoBotao: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  link: { color: '#007bff', textAlign: 'center', marginTop: 20, fontWeight: '600' }
+});
