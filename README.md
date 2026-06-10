@@ -12,10 +12,9 @@ Atividade de aplicação móvel, usando auxilio de uma IA para ajudar a proporci
 ## Execução do Projeto
     cd Front-End
     npm run dev
-<div>
-    <h1>
-            Comando usado para acessar a pasta do front-end, em seguida tem que usar o npm run dev para rodar o código, adiante basta só apertar o CTRL + Click Esquerdo do Mouse no link da porta
 
-            Se tudo ocorrer certo ele vai emitir uma mensagem de alerta dizendo que funcionou, caso ele de como errado, vai emitir outra mensagem em vermelho dizendo qual é o erro e o problema a ser arrumado
-    </h1>
+<div>
+        Comando usado para acessar a pasta do front-end, em seguida tem que usar o npm run dev para rodar o código, adiante basta só apertar o CTRL + Click Esquerdo do Mouse no link da porta
+        
+        Se tudo ocorrer certo ele vai emitir uma mensagem de alerta dizendo que funcionou, caso ele de como errado, vai emitir outra mensagem em vermelho dizendo qual é o erro e o problema a ser arrumado
 </div>
