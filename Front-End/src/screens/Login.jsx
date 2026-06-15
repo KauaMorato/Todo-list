@@ -37,7 +37,7 @@ export default function Login({ navegarParaCadastro, logarSucesso }) {
     </View>
   );
 }
-
+/* Código feito por Kauã e Agnaldo */
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', padding: 20 },
   titulo: { fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'center', color: '#333' },

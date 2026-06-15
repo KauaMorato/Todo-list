@@ -19,7 +19,7 @@ export default function Cadastro({ navegarParaLogin }) {
       Alert.alert('Erro', 'Erro ao cadastrar usuário.');
     }
   };
-
+/* Código feito por Kauã e Agnaldo */
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Criar Conta ✨</Text>
@@ -46,3 +46,4 @@ const styles = StyleSheet.create({
   textoBotao: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   link: { color: '#007bff', textAlign: 'center', marginTop: 20, fontWeight: '600' }
 });
+/* Código feito por Kauã e Agnaldo */

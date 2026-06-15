@@ -80,5 +80,5 @@ function Dashboard({ deslogar }) {
     </div>
   );
 }
-
+/* Código feito por Kauã e Agnaldo */
 export default Dashboard;

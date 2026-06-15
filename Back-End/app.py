@@ -123,6 +123,7 @@ def criar_tarefa():
 def atualizar_tarefa(id):
     usuario_id = obter_usuario_id()
     if not usuario_id:
+        # Código feito por Kauã e Agnaldo 
         return jsonify({"error": "Não autorizado"}), 401
 
     dados = request.get_json()
@@ -165,3 +166,5 @@ def deletar_tarefa(id):
 # Inicia o servidor na porta 5000
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
+
+# código feito por Kauã Morato e Agnaldo
