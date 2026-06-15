@@ -105,3 +105,9 @@
 {"_e":"metro:bundling:progress","_t":1781222290333,"id":"2","progress":0,"total":1,"current":0}
 {"_e":"metro:bundling:done","_t":1781222290435,"id":"2","total":1,"ms":101.4968}
 {"_e":"metro:client_log","_t":1781222293358,"level":"log","data":["[AsyncStorageError: Native module is null, cannot access legacy storage]"]}
+{"_e":"root:init","_t":1781564688266,"format":"v0-jsonl","version":"56.1.14"}
+{"_e":"env:mode","_t":1781564688267,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1781564688270,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1781564688548,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../..\\..\\app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1781564689006,"serverRoot":"../..\\..","projectRoot":"../..\\..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"metro:instantiate","_t":1781564692244,"atlas":false,"workers":8,"host":"::","port":8081}
