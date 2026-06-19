@@ -13,10 +13,14 @@ export default function Cadastro({ navegarParaLogin }) {
       return;
     }
     try {
-      await api.post('/cadastro', { nome, email, senha });
+      console.log('DEBUG: Enviando dados para cadastro:', { nome, email, senha });
+      const response = await api.post('/cadastro', { nome, email, senha });
+      console.log('DEBUG: Resposta do servidor:', response.data);
       Alert.alert('Sucesso', 'Conta criada com sucesso!', [{ text: 'OK', onPress: navegarParaLogin }]);
     } catch (error) {
-      Alert.alert('Erro', 'Erro ao cadastrar usuário.');
+      console.log('DEBUG: Erro na requisição:', error.response?.data || error.message);
+      const mensagemErro = error.response?.data?.error || error.message || 'Erro ao cadastrar usuário';
+      Alert.alert('Erro', mensagemErro);
     }
   };
 /* Código feito por Kauã e Agnaldo */

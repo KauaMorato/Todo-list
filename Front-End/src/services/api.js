@@ -1,17 +1,37 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
-  // DESCUBRA O IP DO SEU PC (ex: 192.168.1.15) E TROQUE ABAIXO:
-  baseURL: 'http://192.168.3.247:5000', 
+  // O IP 10.0.2.2 redireciona as chamadas do emulador Android direto para o seu computador local
+  baseURL: 'http://10.0.2.2:5000',
+  timeout: 10000, // timeout de 10 segundos
 });
 
 api.interceptors.request.use(async (config) => {
-  const token = await AsyncStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  try {
+    console.log('DEBUG: Iniciando interceptor de requisição');
+    const token = await AsyncStorage.getItem('token');
+    console.log('DEBUG: Token recuperado:', token ? 'existe' : 'não existe');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log('DEBUG: Config pronta:', config.url, config.method);
+    return config;
+  } catch (error) {
+    console.log('DEBUG: Erro no interceptor:', error.message);
+    return config; // Continua mesmo com erro
   }
-  return config;
 });
+
+api.interceptors.response.use(
+  (response) => {
+    console.log('DEBUG: Resposta recebida:', response.status, response.data);
+    return response;
+  },
+  (error) => {
+    console.log('DEBUG: Erro na resposta:', error.message, error.response?.status, error.response?.data);
+    return Promise.reject(error);
+  }
+);
 
 export default api;

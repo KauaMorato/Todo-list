@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pymysql
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 app = Flask(__name__)
 # Permite que o seu React (mesmo rodando em outra porta) acesse o Flask
@@ -23,15 +23,21 @@ def get_db_connection():
 
 # Função auxiliar para proteger as rotas e descobrir qual usuário está logado
 def obter_usuario_id():
+    print("DEBUG: Iniciando obter_usuario_id()")
     auth_header = request.headers.get('Authorization')
+    print(f"DEBUG: auth_header = {auth_header}")
     if not auth_header or not auth_header.startswith('Bearer '):
+        print("DEBUG: auth_header vazio ou não começa com 'Bearer '")
         return None
     
     token = auth_header.split(" ")[1]
+    print(f"DEBUG: token extraído = {token}")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        print(f"DEBUG: payload decodificado = {payload}")
         return payload["usuario_id"]
-    except:
+    except Exception as e:
+        print(f"DEBUG: Erro ao decodificar token: {e}")
         return None
 
 # ==================== ROTAS DE AUTENTICAÇÃO ====================
@@ -73,13 +79,18 @@ def login():
             if not usuario or usuario['senha'] != senha:
                 return jsonify({"error": "E-mail ou senha incorretos"}), 401
 
-            # Gera o Token JWT válido por 24 horas
+            # CORREÇÃO: Define a expiração como timestamp numérico no padrão correto
+            tempo_expiracao = datetime.now(timezone.utc) + timedelta(hours=24)
+            
             token = jwt.encode({
                 'usuario_id': usuario['id'],
-                'exp': datetime.utcnow() + timedelta(hours=24)
+                'exp': int(tempo_expiracao.timestamp()) # Convertido para número inteiro
             }, SECRET_KEY, algorithm="HS256")
 
-            return jsonify({"token": token}), 200
+            # CORREÇÃO: Garante que o token seja tratado como string limpa
+            token_string = token.decode('utf-8') if isinstance(token, bytes) else token
+
+            return jsonify({"token": token_string}), 200
     finally:
         db.close()
 
@@ -94,7 +105,6 @@ def listar_tarefas():
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
-            # REGRA DE NEGÓCIO: Só puxa tarefas do usuário logado
             cursor.execute("SELECT * FROM tarefas WHERE usuario_id = %s", (usuario_id,))
             tarefas = cursor.fetchall()
             return jsonify(tarefas), 200
@@ -123,7 +133,6 @@ def criar_tarefa():
 def atualizar_tarefa(id):
     usuario_id = obter_usuario_id()
     if not usuario_id:
-        # Código feito por Kauã e Agnaldo 
         return jsonify({"error": "Não autorizado"}), 401
 
     dados = request.get_json()
@@ -132,7 +141,6 @@ def atualizar_tarefa(id):
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
-            # Segurança: Garante que a tarefa pertence ao usuário
             cursor.execute("SELECT id FROM tarefas WHERE id = %s AND usuario_id = %s", (id, usuario_id))
             if not cursor.fetchone():
                 return jsonify({"error": "Tarefa não encontrada ou acesso negado"}), 404
@@ -152,7 +160,6 @@ def deletar_tarefa(id):
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
-            # Segurança: Garante que a tarefa pertence ao usuário
             cursor.execute("SELECT id FROM tarefas WHERE id = %s AND usuario_id = %s", (id, usuario_id))
             if not cursor.fetchone():
                 return jsonify({"error": "Tarefa não encontrada ou acesso negado"}), 404
@@ -163,8 +170,5 @@ def deletar_tarefa(id):
     finally:
         db.close()
 
-# Inicia o servidor na porta 5000
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
-
-# código feito por Kauã Morato e Agnaldo
+    app.run(host='0.0.0.0', port=5000, debug=True)

@@ -12,6 +12,7 @@ Atividade de aplicação móvel, usando auxilio de uma IA para ajudar a proporci
         Comando usado para baixar o Node.js
     npm install @react-native-async-storage/async-storage axios
     npm install expo
+    npx expo doctor --fix-dependencies
 
 ## Execução do Projeto
     cd Back-End

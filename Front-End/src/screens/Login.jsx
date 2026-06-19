@@ -13,11 +13,15 @@ export default function Login({ navegarParaCadastro, logarSucesso }) {
       return;
     }
     try {
+      console.log('DEBUG: Enviando login com email:', email);
       const response = await api.post('/login', { email, senha });
+      console.log('DEBUG: Login sucesso, token recebido');
       await AsyncStorage.setItem('token', response.data.token);
       logarSucesso();
     } catch (error) {
-      Alert.alert('Erro', 'Email ou senha incorretos');
+      console.log('DEBUG: Erro no login:', error.response?.data || error.message);
+      const mensagemErro = error.response?.data?.error || 'Email ou senha incorretos';
+      Alert.alert('Erro', mensagemErro);
     }
   };
 

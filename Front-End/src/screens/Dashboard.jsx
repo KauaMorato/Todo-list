@@ -12,9 +12,12 @@ function Dashboard({ deslogar }) {
 
   const carregarTarefas = async () => {
     try {
+      console.log('DEBUG: Carregando tarefas...');
       const resposta = await api.get('/tarefas');
+      console.log('DEBUG: Tarefas carregadas:', resposta.data);
       setTarefas(resposta.data);
     } catch (err) {
+      console.log('DEBUG: Erro ao carregar tarefas:', err.response?.data || err.message);
       if (err.response?.status === 401) handleSair();
     }
   };
@@ -23,28 +26,37 @@ function Dashboard({ deslogar }) {
     e.preventDefault();
     if (!novaTarefa.trim()) return;
     try {
+      console.log('DEBUG: Adicionando tarefa:', novaTarefa);
       await api.post('/tarefas', { titulo: novaTarefa });
+      console.log('DEBUG: Tarefa adicionada com sucesso');
       setNovaTarefa('');
       carregarTarefas();
     } catch (err) {
+      console.log('DEBUG: Erro ao adicionar tarefa:', err.response?.data || err.message);
       alert('Erro ao adicionar tarefa');
     }
   };
 
   const alternarConclusao = async (id, concluidaAtual) => {
     try {
-      await api.put(`/tarefas/${id}`, { concluida: !concluidatual });
+      console.log('DEBUG: Alternando conclusão da tarefa:', id);
+      await api.put(`/tarefas/${id}`, { concluida: !concluidaAtual });
+      console.log('DEBUG: Tarefa atualizada');
       carregarTarefas();
     } catch (err) {
+      console.log('DEBUG: Erro ao atualizar tarefa:', err.response?.data || err.message);
       alert('Erro ao atualizar tarefa');
     }
   };
 
   const deletarTarefa = async (id) => {
     try {
+      console.log('DEBUG: Deletando tarefa:', id);
       await api.delete(`/tarefas/${id}`);
+      console.log('DEBUG: Tarefa deletada');
       carregarTarefas();
     } catch (err) {
+      console.log('DEBUG: Erro ao deletar tarefa:', err.response?.data || err.message);
       alert('Erro ao deletar tarefa');
     }
   };
