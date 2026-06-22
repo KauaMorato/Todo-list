@@ -1,53 +1,107 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import api from '../services/api';
+import React, { useState } from "react";
+import {
+  View, Text, TextInput, TouchableOpacity,
+  StyleSheet, ActivityIndicator, Alert,
+  KeyboardAvoidingView, Platform,
+} from "react-native";
+import api from "../services/api";
 
-export default function Cadastro({ navegarParaLogin }) {
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+export default function Cadastro({ navigation }) {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleCadastro = async () => {
-    if (!nome || !email || !senha) {
-      Alert.alert('Erro', 'Preencha todos os campos');
-      return;
-    }
+  async function handleCadastro() {
+    if (!nome || !email || !senha)
+      return Alert.alert("Atenção", "Preencha todos os campos.");
+
+    setLoading(true);
     try {
-      console.log('DEBUG: Enviando dados para cadastro:', { nome, email, senha });
-      const response = await api.post('/cadastro', { nome, email, senha });
-      console.log('DEBUG: Resposta do servidor:', response.data);
-      Alert.alert('Sucesso', 'Conta criada com sucesso!', [{ text: 'OK', onPress: navegarParaLogin }]);
-    } catch (error) {
-      console.log('DEBUG: Erro na requisição:', error.response?.data || error.message);
-      const mensagemErro = error.response?.data?.error || error.message || 'Erro ao cadastrar usuário';
-      Alert.alert('Erro', mensagemErro);
+      await api.post("/cadastro", { nome, email, senha });
+      Alert.alert("Sucesso!", "Conta criada com sucesso.", [
+        { text: "Fazer login", onPress: () => navigation.replace("Login") },
+      ]);
+    } catch (err) {
+      Alert.alert("Erro", err?.response?.data?.error || "Falha ao cadastrar.");
+    } finally {
+      setLoading(false);
     }
-  };
-/* Código feito por Kauã e Agnaldo */
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Criar Conta ✨</Text>
-      <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
-      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
-      <TextInput style={styles.input} placeholder="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
-      
-      <TouchableOpacity style={styles.botao} onPress={handleCadastro}>
-        <Text style={styles.textoBotao}>Cadastrar</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <Text style={styles.titulo}>Criar conta</Text>
+      <Text style={styles.subtitulo}>Rápido e gratuito</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Nome"
+        placeholderTextColor="#555"
+        value={nome}
+        onChangeText={setNome}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="E-mail"
+        placeholderTextColor="#555"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        value={email}
+        onChangeText={setEmail}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Senha"
+        placeholderTextColor="#555"
+        secureTextEntry
+        value={senha}
+        onChangeText={setSenha}
+      />
+
+      <TouchableOpacity
+        style={[styles.botao, loading && { opacity: 0.6 }]}
+        onPress={handleCadastro}
+        disabled={loading}
+      >
+        {loading
+          ? <ActivityIndicator color="#fff" />
+          : <Text style={styles.botaoTexto}>Cadastrar</Text>
+        }
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={navegarParaLogin}>
-        <Text style={styles.link}>Já tem uma conta? Faça Login</Text>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text style={styles.link}>
+          Já tem conta?{" "}
+          <Text style={styles.linkDestaque}>Entrar</Text>
+        </Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
-  titulo: { fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'center', color: '#333' },
-  input: { borderWidth: 1, borderColor: '#ccc', padding: 15, borderRadius: 8, marginBottom: 15, backgroundColor: '#fff' },
-  botao: { backgroundColor: '#28a745', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 10 },
-  textoBotao: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  link: { color: '#007bff', textAlign: 'center', marginTop: 20, fontWeight: '600' }
+  container: {
+    flex: 1, backgroundColor: "#0f0f0f",
+    justifyContent: "center", paddingHorizontal: 28,
+  },
+  titulo: { fontSize: 32, fontWeight: "800", color: "#fff", marginBottom: 4 },
+  subtitulo: { fontSize: 14, color: "#666", marginBottom: 36 },
+  input: {
+    backgroundColor: "#1a1a1a", borderWidth: 1, borderColor: "#2a2a2a",
+    borderRadius: 10, paddingHorizontal: 16, paddingVertical: 14,
+    fontSize: 15, color: "#fff", marginBottom: 14,
+  },
+  botao: {
+    backgroundColor: "#4f6ef7", borderRadius: 10,
+    paddingVertical: 16, alignItems: "center", marginTop: 4,
+  },
+  botaoTexto: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  link: { color: "#666", textAlign: "center", marginTop: 24 },
+  linkDestaque: { color: "#4f6ef7", fontWeight: "700" },
 });
-/* Código feito por Kauã e Agnaldo */

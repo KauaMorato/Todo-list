@@ -12,6 +12,8 @@ Atividade de aplicação móvel, usando auxilio de uma IA para ajudar a proporci
         Comando usado para baixar o Node.js
     npm install @react-native-async-storage/async-storage axios
     npm install expo
+    npm install @react-navigation/native @react-navigation/native-stack
+    npx expo install react-native-screens react-native-safe-area-context
     npx expo doctor --fix-dependencies
 
 ## Execução do Projeto

@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pymysql
 import jwt
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 # Permite que o seu React (mesmo rodando em outra porta) acesse o Flask
@@ -79,18 +79,13 @@ def login():
             if not usuario or usuario['senha'] != senha:
                 return jsonify({"error": "E-mail ou senha incorretos"}), 401
 
-            # CORREÇÃO: Define a expiração como timestamp numérico no padrão correto
-            tempo_expiracao = datetime.now(timezone.utc) + timedelta(hours=24)
-            
+            # Gera o Token JWT válido por 24 horas
             token = jwt.encode({
                 'usuario_id': usuario['id'],
-                'exp': int(tempo_expiracao.timestamp()) # Convertido para número inteiro
+                'exp': datetime.utcnow() + timedelta(hours=24)
             }, SECRET_KEY, algorithm="HS256")
 
-            # CORREÇÃO: Garante que o token seja tratado como string limpa
-            token_string = token.decode('utf-8') if isinstance(token, bytes) else token
-
-            return jsonify({"token": token_string}), 200
+            return jsonify({"token": token}), 200
     finally:
         db.close()
 
@@ -105,6 +100,7 @@ def listar_tarefas():
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
+            # REGRA DE NEGÓCIO: Só puxa tarefas do usuário logado
             cursor.execute("SELECT * FROM tarefas WHERE usuario_id = %s", (usuario_id,))
             tarefas = cursor.fetchall()
             return jsonify(tarefas), 200
@@ -141,6 +137,7 @@ def atualizar_tarefa(id):
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
+            # Segurança: Garante que a tarefa pertence ao usuário
             cursor.execute("SELECT id FROM tarefas WHERE id = %s AND usuario_id = %s", (id, usuario_id))
             if not cursor.fetchone():
                 return jsonify({"error": "Tarefa não encontrada ou acesso negado"}), 404
@@ -160,6 +157,7 @@ def deletar_tarefa(id):
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
+            # Segurança: Garante que a tarefa pertence ao usuário
             cursor.execute("SELECT id FROM tarefas WHERE id = %s AND usuario_id = %s", (id, usuario_id))
             if not cursor.fetchone():
                 return jsonify({"error": "Tarefa não encontrada ou acesso negado"}), 404
@@ -170,5 +168,8 @@ def deletar_tarefa(id):
     finally:
         db.close()
 
+# Inicia o servidor liberando o acesso externo na porta 5000
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+# código feito por Kauã Morato e Agnaldo
