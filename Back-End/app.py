@@ -133,16 +133,22 @@ def atualizar_tarefa(id):
 
     dados = request.get_json()
     concluida = dados.get('concluida')
+    titulo = dados.get('titulo')
 
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
-            # Segurança: Garante que a tarefa pertence ao usuário
             cursor.execute("SELECT id FROM tarefas WHERE id = %s AND usuario_id = %s", (id, usuario_id))
             if not cursor.fetchone():
                 return jsonify({"error": "Tarefa não encontrada ou acesso negado"}), 404
 
-            cursor.execute("UPDATE tarefas SET concluida = %s WHERE id = %s", (concluida, id))
+            if titulo is not None and concluida is not None:
+                cursor.execute("UPDATE tarefas SET titulo = %s, concluida = %s WHERE id = %s", (titulo, concluida, id))
+            elif titulo is not None:
+                cursor.execute("UPDATE tarefas SET titulo = %s WHERE id = %s", (titulo, id))
+            else:
+                cursor.execute("UPDATE tarefas SET concluida = %s WHERE id = %s", (concluida, id))
+
             db.commit()
         return jsonify({"message": "Tarefa atualizada!"}), 200
     finally:
