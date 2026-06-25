@@ -1,4 +1,4 @@
-# Todo-list
+# Todo-list - Projeto de escola
 Atividade de aplicação móvel, usando auxilio de uma IA (Gemini e Claude Clode) para ajudar a proporcionar o projeto
 - Linguagens usadas - MySQL, Python, React Native
 
