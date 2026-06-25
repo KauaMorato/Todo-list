@@ -24,8 +24,8 @@ Atividade de aplicação móvel, usando auxilio de uma IA (Gemini e Claude Clode
 
     cd Front-End
     npx expo start
-    npx expo start -c (serve para inicar o projeto excluindo o cache)
-    npx expo start --lan (altera o endereço ip - Método Bundler)
+    npx expo start -c    (serve para inicar o projeto excluindo o cache)
+    npx expo start --lan    (altera o endereço ip - Método Bundler)
 
         Primeiro se deve abrir a pasta do Back-End, em seguida ligar o servidor que inclui o mysql nele
 
