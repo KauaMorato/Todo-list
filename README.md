@@ -1,15 +1,17 @@
 # Todo-list
-Atividade de aplicação móvel, usando auxilio de uma IA para ajudar a proporcionar o projeto
+Atividade de aplicação móvel, usando auxilio de uma IA (Gemini e Claude Clode) para ajudar a proporcionar o projeto
+- Linguagens usadas - MySQL, Python, React Native
 
 ## Parte do Back-end
     py -m pip install flask flask-cors PyJWT pymysql
         Comando usado para baixar o flask
 
-        Tudo que está por trás da página: Banco de dados, 
+        Tudo que está por trás da página: Banco de dados (MySQL) e Python
+        
 
 ## Parte do Front-End
-    winget install OpenJS.NodeJS
-        Comando usado para baixar o Node.js
+    winget install OpenJS.NodeJS (Comando usado para baixar o Node.js)
+
     npm install @react-native-async-storage/async-storage axios
     npm install expo
     npm install @react-navigation/native @react-navigation/native-stack
