@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://192.168.3.19:5000';
+const API_URL = 'http://192.168.15.10:5000';
 
 export default function App() {
   const [tela, setTela] = useState('login');
